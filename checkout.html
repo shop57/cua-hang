@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh toán — Daily Mart</title>
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <meta name="description" content="Thanh toán bằng chuyển khoản ngân hàng Việt Nam — không cần đăng ký hay đăng nhập.">
+  <meta name="robots" content="noindex">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .checkout-page { padding: 24px 0 64px; max-width: 680px; margin: 0 auto; }
+    .checkout-steps { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
+    .checkout-step { display: flex; align-items: center; gap: 8px; font-size: 0.84rem; color: var(--text-muted); }
+    .checkout-step .dot {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--border); color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center; font-size: 0.76rem; font-weight: 700; flex-shrink: 0;
+    }
+    .checkout-step.active { color: var(--text); font-weight: 600; }
+    .checkout-step.active .dot, .checkout-step.done .dot { background: var(--accent); color: #fff; }
+    .checkout-step-line { flex: 1; height: 1px; background: var(--border); }
+
+    .checkout-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+    .checkout-card + .checkout-card { margin-top: 18px; }
+    .checkout-card h2 { font-size: 1.05rem; margin-bottom: 4px; }
+    .checkout-card .hint { color: var(--text-muted); font-size: 0.82rem; margin: 0 0 16px; }
+
+    .co-summary-line { display: flex; justify-content: space-between; font-size: 0.88rem; padding: 6px 0; color: var(--text-muted); }
+    .co-summary-line span:last-child { color: var(--text); font-family: var(--font-mono); }
+    .co-summary-line.total { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 12px; font-weight: 700; font-size: 1rem; color: var(--text); }
+    .co-summary-line.total span:last-child { color: var(--accent-dark); font-size: 1.1rem; }
+
+    .pay-layout { display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: start; }
+    @media (max-width: 560px) { .pay-layout { grid-template-columns: 1fr; } }
+    .pay-qr { width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; padding: 8px; }
+    .pay-qr img { width: 100%; height: auto; border-radius: 4px; }
+    .pay-detail-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .pay-detail-row:last-child { border-bottom: none; }
+    .pay-detail-label { font-size: 0.76rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pay-detail-value { font-weight: 700; font-size: 0.98rem; font-family: var(--font-mono); text-align: right; }
+    .pay-detail-value.amount { color: var(--accent-dark); font-size: 1.1rem; }
+    .copy-btn {
+      border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius-sm);
+      padding: 5px 10px; font-size: 0.76rem; font-weight: 600; color: var(--text); white-space: nowrap; cursor: pointer;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent-dark); }
+    .copy-btn.copied { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); }
+
+    .pay-note { background: var(--accent-light); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 0.84rem; color: var(--accent-dark); margin-top: 16px; }
+    .pay-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .pay-actions .btn { flex: 1; }
+
+    .order-success { text-align: center; padding: 50px 20px; }
+    .order-success .check { width: 64px; height: 64px; border-radius: 50%; background: var(--accent-light); color: var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 1.8rem; }
+    .order-code-box {
+      display: inline-flex; align-items: center; gap: 10px; background: var(--bg); border: 1px dashed var(--border);
+      border-radius: var(--radius-sm); padding: 10px 16px; margin: 12px 0 6px; font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem;
+    }
+    .status-pill { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; background: #FEF3C7; color: #92400E; }
+
+    .form-field { margin-bottom: 14px; }
+    .form-field label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; }
+    .form-field input, .form-field textarea {
+      width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 0.9rem; background: var(--bg); color: var(--text);
+    }
+    .form-field input:focus, .form-field textarea:focus { border-color: var(--accent); background: var(--surface); }
+    .form-field .field-error { color: var(--danger); font-size: 0.78rem; margin-top: 4px; display: none; }
+    .form-field.invalid input, .form-field.invalid textarea { border-color: var(--danger); }
+    .form-field.invalid .field-error { display: block; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo" aria-label="Trang chủ Daily Mart">
+        <img src="img/logo.png" alt="Daily Mart" class="logo-img">
+      </a>
+      <div style="flex:1;"></div>
+      <div class="header-actions">
+        <a href="javascript:history.back()" class="btn btn-secondary" id="checkoutBackBtn">← Quay lại</a>
+        <div class="settings-wrap">
+          <button type="button" class="icon-btn" id="settingsToggle" aria-haspopup="true" aria-expanded="false" aria-label="Cài đặt">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <div class="settings-panel" id="settingsPanel" hidden>
+            <div class="settings-row">
+              <span>Chế độ tối</span>
+              <button type="button" class="theme-switch" id="themeSwitch" role="switch" aria-checked="false" aria-label="Chuyển giao diện sáng/tối">
+                <span class="theme-switch-thumb"></span>
+              </button>
+            </div>
+            <div class="settings-divider"></div>
+            <a href="admin.html" class="settings-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Quản trị
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container checkout-page">
+      <div class="checkout-steps" id="checkoutSteps"></div>
+      <div id="checkoutContent"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Thanh toán bằng chuyển khoản ngân hàng — không cần tài khoản, không cần đăng nhập.</p>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/payment-config.js"></script>
+  <script src="js/orders.js"></script>
+  <script src="js/settings.js"></script>
+  <script>
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str ?? "";
+      return div.innerHTML;
+    }
+
+    // step: "info" | "pay" | "done"
+    let step = "info";
+    let customerInfo = { name: "", phone: "", address: "", note: "" };
+    let placedOrder = null;
+
+    // ---------------- "Mua ngay" (buy now) support ----------------
+    // If product.html stashed a single {id, qty} before redirecting here,
+    // checkout runs against just that item instead of the shared cart —
+    // and never touches (or clears) the customer's actual cart.
+    let buyNowItem = null;
+    (function initBuyNow() {
+      try {
+        const raw = sessionStorage.getItem("storefront_buynow_v1");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          // Don't validate against ProductStore here — its Firestore
+          // snapshot is still async at this point and the cache may
+          // well be empty, which would wrongly discard a valid item.
+          if (parsed && parsed.id != null && parsed.qty > 0) buyNowItem = parsed;
+          sessionStorage.removeItem("storefront_buynow_v1");
+        }
+      } catch (e) {}
+    })();
+
+    function getCurrentItems() {
+      return buyNowItem ? [buyNowItem] : Cart.items;
+    }
+
+    function getCurrentTotal() {
+      return getCurrentItems().reduce((sum, item) => {
+        const p = ProductStore.getById(item.id);
+        return p ? sum + p.price * item.qty : sum;
+      }, 0);
+    }
+
+    function renderSteps() {
+      const stepsEl = document.getElementById("checkoutSteps");
+      if (step === "done") { stepsEl.style.display = "none"; return; }
+      stepsEl.style.display = "flex";
+      const stepState = (key) => {
+        if (key === step) return "active";
+        if ((key === "info" && step === "pay")) return "done";
+        return "";
+      };
+      stepsEl.innerHTML = `
+        <div class="checkout-step ${stepState("info")}"><span class="dot">1</span> Thông tin nhận hàng</div>
+        <div class="checkout-step-line"></div>
+        <div class="checkout-step ${stepState("pay")}"><span class="dot">2</span> Chuyển khoản &amp; xác nhận</div>`;
+    }
+
+    function goToStep(next) {
+      step = next;
+      renderSteps();
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ---------------- Step 1: customer info ----------------
+
+    function renderInfoStep() {
+      const wrap = document.getElementById("checkoutContent");
+      const total = getCurrentTotal();
+
+      const rows = getCurrentItems().map((item) => {
+        const p = ProductStore.getById(item.id);
+        if (!p) return "";
+        return `<div class="co-summary-line"><span>${escapeHtml(p.name)} × ${item.qty}</span><span>${formatVND(p.price * item.qty)}</span></div>`;
+      }).join("");
+
+      wrap.innerHTML = `
+        <div class="checkout-card">
+          <h2>Thông tin nhận hàng</h2>
+          <p class="hint">Không cần đăng ký hay đăng nhập — chỉ cần điền thông tin để giao hàng.</p>
+          <form id="infoForm" novalidate>
+            <div class="form-field" id="fld-name">
+              <label for="custName">Họ và tên *</label>
+              <input type="text" id="custName" placeholder="Nguyễn Văn A" value="${escapeHtml(customerInfo.name)}">
+              <p class="field-error">Vui lòng nhập họ tên.</p>
+            </div>
+            <div class="form-field" id="fld-phone">
+              <label for="custPhone">Số điện thoại *</label>
+              <input type="tel" id="custPhone" placeholder="09xxxxxxxx" value="${escapeHtml(customerInfo.phone)}">
+              <p class="field-error">Vui lòng nhập số điện thoại hợp lệ.</p>
+            </div>
+            <div class="form-field" id="fld-address">
+              <label for="custAddress">Địa chỉ nhận hàng *</label>
+              <textarea id="custAddress" rows="2" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành">${escapeHtml(customerInfo.address)}</textarea>
+              <p class="field-error">Vui lòng nhập địa chỉ nhận hàng.</p>
+            </div>
+            <div class="form-field">
+              <label for="custNote">Ghi chú (tuỳ chọn)</label>
+              <textarea id="custNote" rows="2" placeholder="Ví dụ: giao giờ hành chính, gọi trước khi giao...">${escapeHtml(customerInfo.note)}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Tiếp tục đến thanh toán</button>
+          </form>
+        </div>
+
+        <div class="checkout-card">
+          <h2>Đơn hàng của bạn</h2>
+          <div id="coSummaryLines">${rows}</div>
+          <div class="co-summary-line total"><span>Tổng cộng</span><span>${formatVND(total)}</span></div>
+        </div>`;
+
+      document.getElementById("infoForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("custName").value.trim();
+        const phone = document.getElementById("custPhone").value.trim();
+        const address = document.getElementById("custAddress").value.trim();
+        const note = document.getElementById("custNote").value.trim();
+
+        let valid = true;
+        const setInvalid = (id, bad) => {
+          document.getElementById(id).classList.toggle("invalid", bad);
+          if (bad) valid = false;
+        };
+        setInvalid("fld-name", !name);
+        setInvalid("fld-phone", !/^[0-9+\s]{8,13}$/.test(phone));
+        setInvalid("fld-address", !address);
+        if (!valid) return;
+
+        customerInfo = { name, phone, address, note };
+        goToStep("pay");
+      });
+    }
+
+    // ---------------- Step 2: bank transfer payment ----------------
+
+    function renderPayStep() {
+      const wrap = document.getElementById("checkoutContent");
+      const cfg = PaymentConfig.get();
+      const totalVND = getCurrentTotal();
+      const orderCode = renderPayStep._code || (renderPayStep._code = "DH" + Date.now().toString().slice(-9));
+      const qrUrl = PaymentConfig.qrImageUrl(totalVND, orderCode);
+
+      wrap.innerHTML = `
+        <div class="checkout-card">
+          <h2>Quét mã QR để chuyển khoản</h2>
+          <p class="hint">Dùng app ngân hàng hoặc ví điện tử để quét mã, hoặc chuyển khoản thủ công theo thông tin bên dưới.</p>
+          <div class="pay-layout">
+            <div class="pay-qr"><img src="${qrUrl}" alt="Mã QR chuyển khoản VietQR" loading="lazy"></div>
+            <div>
+              <div class="pay-detail-row">
+                <div><div class="pay-detail-label">Ngân hàng</div><div class="pay-detail-value">${escapeHtml(PaymentConfig.bankLabel())}</div></div>
+              </div>
+              <div class="pay-detail-row">
+                <div><div class="pay-detail-label">Chủ tài khoản</div><div class="pay-detail-value">${escapeHtml(cfg.accountName)}</div></div>
+              </div>
+              <div class="pay-detail-row">
+                <div><div class="pay-detail-label">Số tài khoản</div><div class="pay-detail-value">${escapeHtml(cfg.accountNumber)}</div></div>
+                <button type="button" class="copy-btn" data-copy="${escapeHtml(cfg.accountNumber)}">Sao chép</button>
+              </div>
+              <div class="pay-detail-row">
+                <div><div class="pay-detail-label">Số tiền</div><div class="pay-detail-value amount">${PaymentConfig.formatVND(totalVND)}</div></div>
+                <button type="button" class="copy-btn" data-copy="${totalVND}">Sao chép</button>
+              </div>
+              <div class="pay-detail-row">
+                <div><div class="pay-detail-label">Nội dung chuyển khoản</div><div class="pay-detail-value">${orderCode}</div></div>
+                <button type="button" class="copy-btn" data-copy="${orderCode}">Sao chép</button>
+              </div>
+            </div>
+          </div>
+          <div class="pay-note">⚠️ Vui lòng chuyển <strong>đúng số tiền</strong> và ghi <strong>đúng nội dung "${orderCode}"</strong> để đơn hàng được xác nhận nhanh nhất.</div>
+          <div class="pay-actions">
+            <button type="button" class="btn btn-secondary" id="backToInfoBtn">Quay lại</button>
+            <button type="button" class="btn btn-primary btn-lg" id="confirmOrderBtn">Tôi đã chuyển khoản — Xác nhận đơn hàng</button>
+          </div>
+        </div>`;
+
+      wrap.querySelectorAll("[data-copy]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const val = btn.getAttribute("data-copy");
+          try {
+            await navigator.clipboard.writeText(val);
+          } catch (e) {
+            const ta = document.createElement("textarea");
+            ta.value = val;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
+          }
+          const original = btn.textContent;
+          btn.textContent = "Đã chép ✓";
+          btn.classList.add("copied");
+          setTimeout(() => { btn.textContent = original; btn.classList.remove("copied"); }, 1600);
+        });
+      });
+
+      document.getElementById("backToInfoBtn").addEventListener("click", () => goToStep("info"));
+
+      document.getElementById("confirmOrderBtn").addEventListener("click", () => {
+        const items = getCurrentItems().map((item) => {
+          const p = ProductStore.getById(item.id);
+          return p ? { id: p.id, name: p.name, price: p.price, qty: item.qty } : null;
+        }).filter(Boolean);
+
+        placedOrder = OrderStore.add({
+          code: orderCode, // same code already shown to the customer as the QR transfer content
+          customer: customerInfo,
+          items,
+          totalVND,
+          bank: { bankName: PaymentConfig.bankLabel(), bankBin: cfg.bankBin, accountNumber: cfg.accountNumber, accountName: cfg.accountName }
+        });
+
+        // "Mua ngay" never touched the shared cart, so only clear it
+        // here when this order actually came from the cart flow.
+        if (!buyNowItem) Cart.clear();
+        goToStep("done");
+      });
+    }
+
+    // ---------------- Step 3: success ----------------
+
+    function renderDoneStep() {
+      const wrap = document.getElementById("checkoutContent");
+      if (!placedOrder) {
+        wrap.innerHTML = `<div class="order-success"><p>Không tìm thấy đơn hàng.</p><a href="index.html" class="btn btn-primary">Về trang chủ</a></div>`;
+        return;
+      }
+      wrap.innerHTML = `
+        <div class="checkout-card order-success">
+          <div class="check">✓</div>
+          <h2 style="margin-bottom:6px;">Đã gửi đơn hàng!</h2>
+          <p style="color:var(--text-muted); margin-bottom:4px;">Mã đơn hàng của bạn:</p>
+          <div class="order-code-box">${placedOrder.code}</div>
+          <p><span class="status-pill">Chờ xác nhận thanh toán</span></p>
+          <p style="color:var(--text-muted); max-width:440px; margin:14px auto 0; font-size:0.9rem;">
+            Chúng tôi sẽ kiểm tra tài khoản ngân hàng và xác nhận đơn hàng của bạn trong thời gian sớm nhất
+            sau khi nhận được chuyển khoản. Vui lòng lưu lại mã đơn hàng để đối chiếu khi cần.
+          </p>
+          <a href="index.html" class="btn btn-primary" style="margin-top:22px;">Tiếp tục mua sắm</a>
+        </div>`;
+    }
+
+    function render() {
+      Cart.load();
+      if (step !== "done" && getCurrentItems().length === 0) {
+        document.getElementById("checkoutContent").innerHTML = `
+          <div class="checkout-card order-success">
+            <p style="color:var(--text-muted); margin-bottom:20px;">Giỏ hàng của bạn đang trống.</p>
+            <a href="index.html" class="btn btn-primary">Chọn sản phẩm</a>
+          </div>`;
+        document.getElementById("checkoutSteps").style.display = "none";
+        return;
+      }
+      if (step === "info") renderInfoStep();
+      else if (step === "pay") renderPayStep();
+      else renderDoneStep();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderSteps();
+      render();
+    });
+
+    // Bank details load from Firestore and may arrive after this page
+    // already rendered the payment step — refresh it if so.
+    window.addEventListener("payment-config:changed", () => {
+      if (step === "pay") renderPayStep();
+    });
+
+    // Product data (names/prices) also streams in from Firestore and can
+    // arrive after the first render — refresh the current step once it
+    // does, so a "Mua ngay" item (or a cart line) isn't shown blank/₫0.
+    window.addEventListener("products:changed", () => {
+      if (step === "info") renderInfoStep();
+      else if (step === "pay") { /* keep the already-generated order code stable */ renderPayStep(); }
+    });
+  </script>
+</body>
+</html>
