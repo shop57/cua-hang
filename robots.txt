@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shop57.github.io/cua-hang/sitemap.xml
