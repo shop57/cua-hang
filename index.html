@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Analytics (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JNCCMVM7RJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JNCCMVM7RJ');
+  </script>
+  <title>Daily Mart — Cửa hàng</title>
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <meta name="description" content="Cửa hàng trực tuyến hiện đại. Xem sản phẩm, tìm kiếm và mua sắm theo danh mục.">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="canonical" href="https://shop57.github.io/cua-hang/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Daily Mart — Cửa hàng">
+  <meta property="og:site_name" content="Daily Mart">
+  <meta property="og:url" content="https://shop57.github.io/cua-hang/">
+  <meta property="og:description" content="Nền tảng cửa hàng trực tuyến — tự quản lý danh mục sản phẩm từ trang Quản trị.">
+  <meta property="og:image" content="https://picsum.photos/seed/dailymart-og/1200/630">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Daily Mart",
+    "url": "https://shop57.github.io/cua-hang/",
+    "logo": "https://shop57.github.io/cua-hang/img/logo.png"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- ===================== Header ===================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo" aria-label="Trang chủ Daily Mart">
+        <img src="img/logo.png" alt="Daily Mart" class="logo-img">
+      </a>
+
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <a href="index.html" class="active">Trang chủ</a>
+      </nav>
+
+      <form class="search-form" role="search" data-search-form>
+        <label class="visually-hidden" for="searchDesktop">Tìm sản phẩm</label>
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="searchDesktop" type="search" placeholder="Tìm sản phẩm..." data-search-input>
+      </form>
+
+      <div class="header-actions">
+        <button type="button" class="icon-btn" id="mobileSearchToggle" aria-label="Bật/tắt tìm kiếm">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button type="button" class="icon-btn" data-cart-open aria-label="Mở giỏ hàng">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-badge" data-cart-count>0</span>
+        </button>
+        <div class="settings-wrap">
+          <button type="button" class="icon-btn" id="settingsToggle" aria-haspopup="true" aria-expanded="false" aria-label="Cài đặt">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <div class="settings-panel" id="settingsPanel" hidden>
+            <div class="settings-row">
+              <span>Chế độ tối</span>
+              <button type="button" class="theme-switch" id="themeSwitch" role="switch" aria-checked="false" aria-label="Chuyển giao diện sáng/tối">
+                <span class="theme-switch-thumb"></span>
+              </button>
+            </div>
+            <div class="settings-divider"></div>
+            <a href="admin.html" class="settings-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Quản trị
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mobile-search" id="mobileSearchWrap" style="display:none;">
+      <form role="search" data-search-form>
+        <label class="visually-hidden" for="searchMobile">Tìm sản phẩm</label>
+        <div class="search-form" style="max-width:none;">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="searchMobile" type="search" placeholder="Tìm sản phẩm..." data-search-input>
+        </div>
+      </form>
+    </div>
+
+    <nav class="category-bar" aria-label="Danh mục sản phẩm">
+      <div class="container">
+        <div class="category-list" id="categoryList"></div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ===================== Main ===================== -->
+  <main>
+    <div class="container">
+      <div class="page-heading">
+        <div>
+          <h1>Tất cả sản phẩm</h1>
+          <p class="result-count" id="resultCount"></p>
+        </div>
+      </div>
+
+      <section class="product-grid" id="productGrid" aria-live="polite">
+        <!-- Rendered live from ProductStore by js/main.js -->
+      </section>
+    </div>
+  </main>
+
+  <!-- ===================== Cart drawer ===================== -->
+  <div class="cart-overlay" id="cartOverlay" data-cart-close></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Giỏ hàng">
+    <div class="cart-drawer-header">
+      <h2>Giỏ hàng của bạn</h2>
+      <button type="button" class="icon-btn" data-cart-close aria-label="Đóng giỏ hàng">✕</button>
+    </div>
+    <div class="cart-drawer-body" id="cartDrawerBody"></div>
+    <div class="cart-drawer-footer" id="cartDrawerFooter" style="display:none;">
+      <div class="cart-total-row">
+        <span>Tổng cộng</span>
+        <span id="cartDrawerTotal">$0.00</span>
+      </div>
+      <a href="cart.html" class="btn btn-primary btn-block btn-lg">Xem giỏ hàng</a>
+      <button type="button" class="cart-clear-link" id="cartClearBtn">Xoá giỏ hàng</button>
+    </div>
+  </aside>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/categories.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/settings.js"></script>
+  <script>
+    document.getElementById("mobileSearchToggle")?.addEventListener("click", () => {
+      const wrap = document.getElementById("mobileSearchWrap");
+      wrap.style.display = wrap.style.display === "none" ? "block" : "none";
+      if (wrap.style.display === "block") document.getElementById("searchMobile")?.focus();
+    });
+  </script>
+</body>
+</html>
