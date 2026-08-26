@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Analytics (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JNCCMVM7RJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JNCCMVM7RJ');
+  </script>
+  <title>Quản trị — Daily Mart</title>
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <meta name="description" content="Quản lý danh mục sản phẩm: thêm, sửa, xoá, nhập và xuất sản phẩm.">
+  <meta name="robots" content="noindex">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo" aria-label="Trang chủ Daily Mart">
+        <img src="img/logo.png" alt="Daily Mart" class="logo-img">
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="index.html">Trang chủ</a>
+      </nav>
+      <div style="flex:1;"></div>
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-secondary">Xem cửa hàng</a>
+        <button type="button" class="btn btn-secondary" id="logoutBtn" style="display:none;">Đăng xuất</button>
+        <div class="settings-wrap">
+          <button type="button" class="icon-btn" id="settingsToggle" aria-haspopup="true" aria-expanded="false" aria-label="Cài đặt">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <div class="settings-panel" id="settingsPanel" hidden>
+            <div class="settings-row">
+              <span>Chế độ tối</span>
+              <button type="button" class="theme-switch" id="themeSwitch" role="switch" aria-checked="false" aria-label="Chuyển giao diện sáng/tối">
+                <span class="theme-switch-thumb"></span>
+              </button>
+            </div>
+            <div class="settings-divider"></div>
+            <a href="admin.html" class="settings-link" aria-current="page">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Quản trị
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== Login gate ===================== -->
+  <div class="container" id="loginScreen" style="max-width:420px; padding-top:60px;">
+    <div class="admin-card">
+      <h2 style="margin-bottom:4px;">Đăng nhập quản trị</h2>
+      <p class="hint">Chỉ chủ cửa hàng mới đăng nhập được vào trang này bằng tài khoản và mật khẩu riêng.</p>
+      <form id="loginForm">
+        <div class="form-field">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="ban@vidu.com" autocomplete="username" required>
+        </div>
+        <div class="form-field">
+          <label for="loginPassword">Mật khẩu</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <p id="loginError" style="color:#e5484d; font-size:0.85rem; display:none; margin:0 0 12px;"></p>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="loginSubmitBtn">Đăng nhập</button>
+        </div>
+      </form>
+      <p class="hint" style="margin-top:14px; margin-bottom:0;">
+        Chưa có tài khoản admin? Tạo trong Firebase Console → Authentication → Users. Xem HUONG_DAN_FIREBASE.md để biết chi tiết.
+      </p>
+    </div>
+  </div>
+
+  <main id="adminApp" style="display:none;">
+    <div class="container">
+      <div class="admin-header">
+        <h1>Quản lý danh mục</h1>
+        <p>Thêm, sửa, xoá, nhập và xuất sản phẩm. Dữ liệu được lưu dùng chung trên Firebase — mọi khách truy cập trang chủ đều thấy, chỉ bạn mới sửa được sau khi đăng nhập.</p>
+      </div>
+
+      <div class="admin-layout">
+        <!-- ===================== Left: form + data tools ===================== -->
+        <div>
+          <div class="admin-card">
+            <h2 id="formTitle">Thêm sản phẩm</h2>
+            <p class="hint">Các trường có dấu * là bắt buộc — các trường còn lại có giá trị mặc định hợp lý.</p>
+
+            <form id="productForm">
+              <div class="form-field">
+                <label for="fName">Tên sản phẩm *</label>
+                <input type="text" id="fName" placeholder="VD: Túi tote cổ điển" required>
+              </div>
+
+              <div class="form-field">
+                <label for="fStock">Tình trạng kho</label>
+                <select id="fStock">
+                  <option value="in_stock">Còn hàng</option>
+                  <option value="out_of_stock">Hết hàng</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="fPrice">Giá (₫)</label>
+                  <input type="number" id="fPrice" step="1000" min="0" placeholder="499000">
+                </div>
+                <div class="form-field">
+                  <label for="fOldPrice">Giá cũ (₫)</label>
+                  <input type="number" id="fOldPrice" step="1000" min="0" placeholder="Không bắt buộc">
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="fImages">Ảnh sản phẩm (mỗi dòng 1 link)</label>
+                <textarea id="fImages" rows="3" placeholder="https://anh-1.jpg&#10;https://anh-2.jpg&#10;https://anh-3.jpg"></textarea>
+                <p class="hint" style="margin:6px 0 0;">Dán mỗi link ảnh 1 dòng. Ảnh ở dòng đầu tiên sẽ là ảnh đại diện (hiện ở thẻ sản phẩm trang chủ). Cách lấy link: xem hướng dẫn "Lấy link ảnh/video miễn phí" trong HUONG_DAN_FIREBASE.md.</p>
+              </div>
+
+              <div class="form-field">
+                <label for="fVideos">Video sản phẩm (không bắt buộc, mỗi dòng 1 link)</label>
+                <textarea id="fVideos" rows="2" placeholder="https://youtube.com/watch?v=...&#10;https://video-cua-toi.mp4"></textarea>
+                <p class="hint" style="margin:6px 0 0;">Nhận link YouTube/Vimeo hoặc link video .mp4 trực tiếp.</p>
+              </div>
+
+              <div class="form-field">
+                <label for="fCategory">Danh mục</label>
+                <input type="text" id="fCategory" list="categoryOptions" placeholder="VD: Phụ kiện">
+                <datalist id="categoryOptions"></datalist>
+              </div>
+
+              <div class="form-field">
+                <label for="fOptionLabel">Tên nhóm phân loại (không bắt buộc)</label>
+                <input type="text" id="fOptionLabel" placeholder="VD: Kích cỡ, Màu sắc, Phiên bản...">
+              </div>
+              <div class="form-field">
+                <label>Các lựa chọn</label>
+                <div id="optionValuesList" class="option-values-list"></div>
+                <button type="button" id="addOptionValueBtn" class="btn btn-secondary btn-sm" style="margin-top:6px;">+ Thêm lựa chọn</button>
+              </div>
+              <p class="hint" style="margin:6px 0 14px;">Nếu điền, trang sản phẩm sẽ hiện các nút để khách chọn (VD: size M/L/XL, hoặc màu Trắng/Đen). Tick "Hết hàng" cho lựa chọn nào đã hết — khách sẽ thấy lựa chọn đó bị mờ đi và không bấm chọn được, các lựa chọn khác vẫn mua bình thường.</p>
+
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="fRating">Đánh giá (0–5)</label>
+                  <input type="number" id="fRating" step="0.1" min="0" max="5" placeholder="4.5">
+                </div>
+                <div class="form-field">
+                  <label for="fReviews">Số lượt đánh giá</label>
+                  <input type="number" id="fReviews" step="1" min="0" placeholder="0">
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="fDescription">Mô tả</label>
+                <textarea id="fDescription" rows="3" placeholder="Mô tả ngắn về sản phẩm"></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="formSubmitBtn">Thêm sản phẩm</button>
+                <button type="button" class="btn btn-secondary" id="formCancelBtn" style="display:none;">Huỷ</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h2>Thêm danh mục</h2>
+            <p class="hint">Tạo danh mục mới để dùng khi thêm sản phẩm — không cần có sản phẩm nào trong danh mục trước.</p>
+
+            <form id="categoryForm">
+              <div class="form-field" style="margin-bottom:10px;">
+                <label for="fNewCategory">Tên danh mục *</label>
+                <input type="text" id="fNewCategory" placeholder="VD: Phụ kiện" required>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Thêm danh mục</button>
+              </div>
+            </form>
+
+            <div class="category-manage-list" id="categoryManageList" style="margin-top:14px;"></div>
+          </div>
+
+          <div class="admin-card">
+            <h2>Cài đặt thanh toán (chuyển khoản ngân hàng)</h2>
+            <p class="hint">Hiển thị cho khách hàng dưới dạng mã VietQR khi thanh toán. Không dùng PayPal, không qua cổng thanh toán — khách tự chuyển khoản và bạn xác nhận từng đơn bên dưới sau khi tiền về tài khoản.</p>
+
+            <form id="paymentForm">
+              <div class="form-field">
+                <label for="fBank">Ngân hàng</label>
+                <select id="fBank"></select>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="fAccountNumber">Số tài khoản</label>
+                  <input type="text" id="fAccountNumber" placeholder="0123456789" required>
+                </div>
+                <div class="form-field">
+                  <label for="fAccountName">Tên chủ tài khoản</label>
+                  <input type="text" id="fAccountName" placeholder="NGUYEN VAN A" required>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Lưu cài đặt thanh toán</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h2>Công cụ dữ liệu</h2>
+            <p class="hint">Sao lưu danh mục, nhập hàng loạt sản phẩm, hoặc khôi phục dữ liệu demo gốc.</p>
+
+            <div class="admin-toolbar">
+              <button type="button" class="btn btn-secondary" id="exportBtn">Xuất sản phẩm (JSON)</button>
+              <button type="button" class="btn btn-secondary" id="resetDemoBtn">Đặt lại sản phẩm demo</button>
+            </div>
+
+            <div class="form-field" style="margin-top:4px;">
+              <label for="importFile">Nhập sản phẩm (file JSON)</label>
+              <div class="file-input-row">
+                <input type="file" id="importFile" accept="application/json,.json">
+              </div>
+              <p class="hint" style="margin-top:8px; margin-bottom:0;">Cần một mảng JSON chứa sản phẩm (giống định dạng khi xuất). Sản phẩm nhập vào sẽ được <strong>thêm</strong> vào danh mục hiện tại — không ghi đè sản phẩm đã có.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================== Right: catalog / orders ===================== -->
+        <div>
+          <div class="admin-tabs">
+            <button type="button" class="admin-tab active" id="tabCatalogBtn" data-tab="catalog">Danh mục</button>
+            <button type="button" class="admin-tab" id="tabOrdersBtn" data-tab="orders">Đơn hàng <span id="ordersPendingBadge" class="admin-tab-badge" style="display:none;"></span></button>
+            <button type="button" class="admin-tab" id="tabCommunityBtn" data-tab="community">Cộng đồng</button>
+            <button type="button" class="admin-tab" id="tabStatsBtn" data-tab="stats">Tổng quan</button>
+          </div>
+
+          <div class="admin-card" id="panelCatalog">
+            <div class="admin-list-header">
+              <h2>Danh mục</h2>
+              <span id="adminCount"></span>
+            </div>
+            <input type="search" id="adminSearch" class="admin-search-input" placeholder="Lọc theo tên hoặc danh mục...">
+            <div class="admin-list" id="adminList" style="margin-top:14px;"></div>
+          </div>
+
+          <div class="admin-card" id="panelOrders" style="display:none;">
+            <div class="admin-list-header">
+              <h2>Đơn hàng</h2>
+              <span id="ordersCount"></span>
+            </div>
+            <p class="hint">Đơn hàng đặt qua chuyển khoản ngân hàng khi thanh toán. Kiểm tra tài khoản ngân hàng rồi đánh dấu từng đơn Đã thanh toán hoặc Đã huỷ.</p>
+            <div class="admin-list" id="ordersList"></div>
+          </div>
+
+          <div id="panelCommunity" style="display:none;">
+            <div class="admin-card">
+              <div class="admin-list-header">
+                <h2>Đánh giá sản phẩm</h2>
+                <span id="reviewsAdminCount"></span>
+              </div>
+              <p class="hint">Ẩn/xoá đánh giá vi phạm. Đánh giá đã ẩn sẽ không hiển thị cho khách nhưng vẫn tính được ở đây để bạn xem lại.</p>
+              <div class="admin-list" id="reviewsAdminList"></div>
+            </div>
+
+            <div class="admin-card">
+              <div class="admin-list-header">
+                <h2>Bình luận</h2>
+                <span id="commentsAdminCount"></span>
+              </div>
+              <p class="hint">Ẩn/xoá bình luận spam hoặc vi phạm.</p>
+              <div class="admin-list" id="commentsAdminList"></div>
+            </div>
+          </div>
+
+          <div id="panelStats" style="display:none;">
+            <div class="admin-card">
+              <div class="admin-list-header">
+                <h2>Sản phẩm được xem nhiều nhất</h2>
+                <span id="viewsStatsTotal"></span>
+              </div>
+              <p class="hint">Xếp hạng theo lượt xem trang chi tiết sản phẩm (đã lọc bớt tăng ảo khi khách refresh liên tục).</p>
+              <div class="admin-list" id="viewsStatsList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Daily Mart — trang Quản trị được bảo vệ bằng đăng nhập riêng của bạn. Dữ liệu sản phẩm, danh mục, đơn hàng và cài đặt thanh toán được lưu dùng chung trên Firebase cho mọi khách truy cập.</p>
+    </div>
+  </footer>
+
+  <div class="admin-toast" id="adminToast"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/categories.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/payment-config.js"></script>
+  <script src="js/orders.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/comments.js"></script>
+  <script src="js/reviews.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/admin-auth.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>
